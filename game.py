@@ -4,11 +4,6 @@ import numpy as np
 
 pygame.init()
  
-###################
-### Load assets ###
-###################
-spriteSheet = pygame.image.load("assets/spritesheet.png")
-
 ########################
 ### Config Constants ###
 ########################
@@ -17,6 +12,8 @@ spriteSheetHeight = 272
 screenWidth = 480
 screenHeight = 320
 tileSize = 16
+tileWidth = 16
+tileHeight = 16
 levelWidth = 4800
 levelHeight = screenHeight
 
@@ -34,15 +31,21 @@ done = False
 pixelsScrolled = 0
 levelPosition = 0
 
+###################
+### Load assets ###
+###################
+spriteSheet = pygame.image.load("assets/spritesheet.png")
+tiles = np.load("assets/level1.npy")
+
 ###############
 ## Functions ##
 ###############
-def getTile(tileNumber):
-    row = tileNumber / (spriteSheetWidth/tileSize)
-    column = tileNumber % (spriteSheetWidth/tileSize)
+def getTile(tileNumber, tileWidth, tileHeight):
+    row = tileNumber / (spriteSheetWidth/tileWidth)
+    column = tileNumber % (spriteSheetWidth/tileWidth)
     x = column * tileSize
     y = row * tileSize
-    return [x,y,tileSize,tileSize]
+    return [x,y,tileWidth,tileHeight]
 
 def fetchTiles(startColumn, endColumn):
     tilesToDraw = tiles[0:screenHeight/tileSize, startColumn:endColumn]
@@ -55,10 +58,9 @@ def drawScreenTiles(tiles, pixelsScrolled, levelPosition):
     endColumn = startColumn + (screenWidth / tileSize) + 1
     tilesToDraw = tiles[0:20, startColumn:endColumn]
     for rowCount, columnCount in fetchTiles(startColumn, endColumn):
-        screen.blit(spriteSheet, (columnCount * tileSize - pixelsScrolled, rowCount * tileSize), getTile(62))
+        screen.blit(spriteSheet, (columnCount * tileSize - pixelsScrolled, rowCount * tileSize), getTile(62, tileWidth, tileHeight))
 
-
-tiles = np.ones((levelHeight/tileSize, levelWidth/tileSize), dtype=np.int)
+#np.save("assets/level.txt", tiles)
 
 ################# 
 ### Game loop ###
