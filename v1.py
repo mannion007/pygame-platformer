@@ -1,5 +1,6 @@
 import pygame
 from random import randint
+import numpy as np
 
 pygame.init()
  
@@ -14,6 +15,10 @@ screenWidth = 480
 screenHeight = 320
 
 levelWidth = 4800
+
+# for now assume level is horizontal only
+levelHeight = screenHeight
+
 #level is 300 tiles wide
 #level is 20 tiles high
 #level is 6000 tiles
@@ -23,10 +28,9 @@ pixelsScrolled = 0
 size = (screenWidth, screenHeight)
 tileSize = 16
 
-# build tile array - Todo, make this pull in a non random array
-tiles = []
-for i in range(0, 6000):
-    tiles.append(randint(3,340))
+# build the 2D numpy tile list - Todo, make this pull in a non random array
+tiles = np.ones((levelWidth/tileSize, levelHeight/tileSize), dtype=np.int)
+
 
 # Game setup
 screen = pygame.display.set_mode(size)
@@ -45,15 +49,24 @@ def getTile(tileNumber):
     return [x,y,tileSize,tileSize]
 
 # Draw the tile array to the screen
-def drawScreenTiles(tiles):
-    xOffset = 0
-    yOffset = 0
-    for tile in tiles:
-        if(xOffset >= (screenWidth + tileSize)):
-            xOffset = 0
-            yOffset += tileSize
-        screen.blit(spriteSheet, ((xOffset - pixelsScrolled), yOffset), getTile(tile))
-        xOffset += tileSize
+def drawScreenTiles(tiles, pixelsScrolled):
+
+    # Work out how many full tiles scrolled to know the start column, end column will always be that + screen width
+    startColumn = tileSize / pixelsScrolled
+    endColumn = startColumn + screenWidth /tileSize
+
+    tilesToDraw = tiles[:startColumn, :endColumn]
+
+    #rowIterator = np.nditer(tilesToDraw, flags=['f_index'])
+    #while not rowIterator.finished:
+    rowCount = 0
+    columnCount = 0
+    print(tiles[0])
+    for row in np.nditer(tiles):
+        for tile in np.nditer(row):
+            screen.blit(spriteSheet, ((rowCount * tileSize), columnCount * tileSize), getTile(tile))
+            columnCount += 1
+    rowCount += 1
  
 # Loop as long as done == False
 while not done:
@@ -68,13 +81,13 @@ while not done:
     # Clear the screen and set the screen background
     screen.fill([255,255,255])
 
-    tilesToDraw = tiles[0:640]
+    #tilesToDraw = tiles[0:640]
 
-    pixelsScrolled +=1
-    if pixelsScrolled >= tileSize:
-        pixelsScrolled = 0
+    pixelsScrolled =1
+    #if pixelsScrolled >= tileSize:
+    #    pixelsScrolled = 0
 
-    drawScreenTiles(tilesToDraw)
+    drawScreenTiles(tiles, pixelsScrolled)
  
     # Go ahead and update the screen with what we've drawn.
     # This MUST happen after all the other drawing commands.
