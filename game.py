@@ -1,6 +1,7 @@
 import pygame
 from random import randint
 import numpy as np
+import hero
 
 pygame.init()
  
@@ -16,6 +17,7 @@ tileWidth = 16
 tileHeight = 16
 levelWidth = 4800
 levelHeight = screenHeight
+heroFrame = 0
 
 ##################
 ### Setup game ###
@@ -37,14 +39,22 @@ levelPosition = 0
 spriteSheet = pygame.image.load("assets/spritesheet.png")
 tiles = np.load("assets/level1.npy")
 
+print(tiles)
+
+##########
+## Hero ##
+##########
+heroSpriteSheet = pygame.image.load("assets/hero.png")
+theHero = hero
+
 ###############
 ## Functions ##
 ###############
-def getTile(tileNumber, tileWidth, tileHeight):
+def getTile(tileNumber, tileWidth, tileHeight, spriteSheetWidth):
     row = tileNumber / (spriteSheetWidth/tileWidth)
     column = tileNumber % (spriteSheetWidth/tileWidth)
-    x = column * tileSize
-    y = row * tileSize
+    x = column * tileWidth
+    y = row * tileHeight
     return [x,y,tileWidth,tileHeight]
 
 def fetchTiles(startColumn, endColumn):
@@ -58,7 +68,10 @@ def drawScreenTiles(tiles, pixelsScrolled, levelPosition):
     endColumn = startColumn + (screenWidth / tileSize) + 1
     tilesToDraw = tiles[0:20, startColumn:endColumn]
     for rowCount, columnCount in fetchTiles(startColumn, endColumn):
-        screen.blit(spriteSheet, (columnCount * tileSize - pixelsScrolled, rowCount * tileSize), getTile(62, tileWidth, tileHeight))
+        screen.blit(spriteSheet, (columnCount * tileSize - pixelsScrolled, rowCount * tileSize), getTile(tiles[rowCount][columnCount], tileWidth, tileHeight, spriteSheetWidth))
+
+def drawHero(heroFrame):
+    screen.blit(heroSpriteSheet, (50, 50), getTile(heroFrame, 30, 48, 510))
 
 #np.save("assets/level.txt", tiles)
 
@@ -89,6 +102,12 @@ while not done:
     # inside the main while not done loop.
     screen.fill([255,255,255])
     drawScreenTiles(tiles, pixelsScrolled, levelPosition)
+
+    heroFrame += 1
+    if(heroFrame >= 17):
+        heroFrame = 0
+
+    drawHero(heroFrame)
  
     # Go ahead and update the screen with what we've drawn.
     # This MUST happen after all the other drawing commands.
@@ -96,7 +115,7 @@ while not done:
 
     # This limits the while loop to a max of 60 times per second.
     # Leave this out and we will use all CPU we can.
-    clock.tick(60)
+    clock.tick(20)
  
 # Be IDLE friendly
 pygame.quit()
