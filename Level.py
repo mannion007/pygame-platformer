@@ -30,11 +30,10 @@ class Level(object):
             for columnCount, column in enumerate(row):
                 yield rowCount, columnCount
 
-    def move(self, pixelsToMove):
-        self.position += pixelsToMove
+    def update(self, hero):
+        if(hero.position[0] >= self.screenWidth * 0.65 and hero.speed[0] > 0):
+            self.position += hero.speed[0]
 
-    def render(self, hero):
-        if(hero.position >= self.screenWidth * 0.65 and hero.speed > 0):
-            self.position += hero.speed
+    def render(self):
         for rowCount, columnCount in self.fetchTiles():
-            self.screen.blit(self.spriteSheet, (columnCount * self.tileWidth - (self.position % self.tileWidth), rowCount * self.tileHeight), self.getTile(self.tiles[rowCount][columnCount]))
+            self.screen.blit(self.spriteSheet, (columnCount * self.tileWidth - (self.position % self.tileWidth), rowCount * self.tileHeight), self.getTile(62))

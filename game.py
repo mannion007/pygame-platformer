@@ -26,13 +26,8 @@ clock = pygame.time.Clock()
 ## Variables ##
 ###############
 done = False
-
 level = Level(screen)
 hero = Hero(screen)
-
-###################
-### Load assets ###
-###################
 
 ################# 
 ### Game loop ###
@@ -42,33 +37,27 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-        
-    keystate = pygame.key.get_pressed()
-    if keystate[pygame.K_d]:
-        speed = 3
-    elif keystate[pygame.K_a]:
-        speed = -3
-    else:
-        speed = 0
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w:
+                hero.startJump()
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_w:
+                hero.endJump()
  
-    # All drawing code happens after the for loop and but
-    # inside the main while not done loop.
+    # Updating
+    level.update(hero)
+    hero.update()
+
+    # Drawing
     screen.fill([255,255,255])
-    
-    level.render(hero)
 
-    hero.move(speed)
-
+    level.render()
     hero.render()
 
-    
- 
-    # Go ahead and update the screen with what we've drawn.
-    # This MUST happen after all the other drawing commands.
+    # Update screen
     pygame.display.flip()
 
-    # This limits the while loop to a max of 60 times per second.
-    # Leave this out and we will use all CPU we can.
+    # Framerate
     clock.tick(60)
  
 # Be IDLE friendly
