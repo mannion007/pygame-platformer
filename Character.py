@@ -13,11 +13,19 @@ class Hero:
 
     gravity = 0.75
     onGround = False
+
+    framesToDelay = 3
+    framesDelayed = 0
+    currentFrame = 0
    
     def __init__(self, screen):
         self.screenWidth, self.screenHeight = pygame.display.Info().current_w, pygame.display.Info().current_h
         self.screen = screen
         self.surface = pygame.Surface(self.tileSize)
+        self.runGen = self.getRunFrame()
+        self.standGen = self.getStandFrame()
+        self.jumpGen = self.getJumpFrame()
+        self.updateHeroFrame()
 
     def getTile(self, tileNumber):
         row = tileNumber / (self.spriteSheetSize[0]/self.tileSize[0])
@@ -26,10 +34,57 @@ class Hero:
         y = row * self.tileSize[1]
         return [x, y, self.tileSize[0], self.tileSize[1]]
 
+    def updateHeroFrame(self):
+        self.framesDelayed += 1
+        if(self.state == 'stand'):
+            if(self.framesDelayed >= 10):
+                self.framesDelayed = 0
+                self.currentFrame = next(self.standGen)
+        elif(self.state == 'run'):
+            if(self.framesDelayed >= 5):
+                self.framesDelayed = 0
+                self.currentFrame = next(self.runGen)
+        elif(self.state == 'jump'):
+            if(self.framesDelayed >= 3):
+                self.framesDelayed = 0
+                self.currentFrame = next(self.jumpGen)
+
+
+    def getRunFrame(self):
+        while True:
+            yield 5
+            yield 6
+            yield 7
+            yield 8
+            yield 9
+            yield 10
+            yield 11
+            yield 12
+            yield 13
+            yield 14
+            yield 15
+            yield 16
+
+    def getStandFrame(self):
+        while True:
+            yield 17
+            yield 18
+            yield 19
+            yield 20
+
+    def getJumpFrame(self):
+        yield 0
+        yield 1
+        yield 2
+        yield 3
+
+        while True:
+            yield 4
+
     def startJump(self):
         if(self.onGround):
             self.speed[1] = -16
-            self.frame = 4
+            self.state = 'jump'
             self.onGround = False
 
     def endJump(self):
@@ -42,17 +97,14 @@ class Hero:
         if keystate[pygame.K_d]:
             self.speed[0] = 3
             if self.onGround:
-                self.frame = 8
                 self.state = 'run'
         elif keystate[pygame.K_a]:
             self.speed[0] = -3
             if self.onGround:
-                self.frame = 8
                 self.state = 'run'
         else:
             self.speed[0] = 0
             if self.onGround:
-                self.frame = 20
                 self.state = 'stand'
 
         self.speed[1] += self.gravity
@@ -71,4 +123,5 @@ class Hero:
                 self.position[0] += self.speed[0]
 
     def render(self):
-        self.screen.blit(self.spriteSheet, (self.position[0], self.position[1]), self.getTile(self.frame))
+        self.updateHeroFrame()
+        self.screen.blit(self.spriteSheet, (self.position[0], self.position[1]), self.getTile(self.currentFrame))
