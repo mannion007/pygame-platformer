@@ -44,14 +44,14 @@ while not done:
             if event.key == pygame.K_w:
                 hero.endJump()
  
+    # Drawing
+    screen.fill([255,255,255])
+    
     # Updating
     level.update(hero)
     hero.update()
 
-    # Drawing
-    screen.fill([255,255,255])
-
-    level.render()
+    level.render()    
     hero.render()
 
     # Update screen

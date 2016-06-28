@@ -1,11 +1,10 @@
 import pygame
-import math
-phi = math.pi * 2
+from Weapon import Orb
 
 class Hero:
 
     spriteSheet = pygame.image.load("assets/hero.png")
-    spriteSheetSize = [630,48]
+    
     tileSize = [30,48]
     speed = [0,0]
     
@@ -19,15 +18,6 @@ class Hero:
     framesToDelay = 3
     framesDelayed = 0
     currentFrame = 0
-
-    orbitFramesDelayed = 0
-    currentOrbitFrameDelayed = 0
-
-    minOrbitRadius = 35
-    maxOrbitRadius = 300
-    orbitRadius = 35
-
-    orbitPos = [0,0]
    
     def __init__(self, screen):
         self.screenWidth, self.screenHeight = pygame.display.Info().current_w, pygame.display.Info().current_h
@@ -37,10 +27,11 @@ class Hero:
         self.standGen = self.getStandFrame()
         self.jumpGen = self.getJumpFrame()
         self.updateHeroFrame()
+        self.orb = Orb(self.screen)
 
     def getTile(self, tileNumber):
-        row = tileNumber / (self.spriteSheetSize[0]/self.tileSize[0])
-        column = tileNumber % (self.spriteSheetSize[0]/self.tileSize[0])
+        row = tileNumber / (self.spriteSheet.get_rect().width/self.tileSize[0])
+        column = tileNumber % (self.spriteSheet.get_rect().width/self.tileSize[0])
         x = column * self.tileSize[0]
         y = row * self.tileSize[1]
         return [x, y, self.tileSize[0], self.tileSize[1]]
@@ -60,26 +51,20 @@ class Hero:
                 self.framesDelayed = 0
                 self.currentFrame = next(self.jumpGen)
 
-    def updateOrbitPos(self):
-        #self.orbitFramesDelayed += 1
-        #if(self.framesDelayed >= 5):
-            #self.orbitFramesDelayed = 0
-        self.orbitPos = self.orbit([self.position[0] + self.tileSize[0] / 2, self.position[1] + self.tileSize[1] / 2], self.orbitRadius, pygame.time.get_ticks() * 0.001)
-
     def getRunFrame(self):
         while True:
-            yield 5
-            yield 6
-            yield 7
-            yield 8
-            yield 9
-            yield 10
-            yield 11
-            yield 12
-            yield 13
-            yield 14
-            yield 15
             yield 16
+            yield 15
+            yield 14
+            yield 13
+            yield 12
+            yield 11
+            yield 10
+            yield 9
+            yield 8
+            yield 7
+            yield 6
+            yield 5
 
     def getStandFrame(self):
         while True:
@@ -89,10 +74,10 @@ class Hero:
             yield 20
 
     def getJumpFrame(self):
-        yield 0
-        yield 1
-        yield 2
         yield 3
+        yield 2
+        yield 1
+        yield 0
 
         while True:
             yield 4
@@ -123,13 +108,6 @@ class Hero:
             if self.onGround:
                 self.state = 'stand'
 
-        if keystate[pygame.K_SPACE]:
-            if(self.orbitRadius < self.maxOrbitRadius):
-                self.orbitRadius += 2
-        else:
-            if(self.orbitRadius > self.minOrbitRadius):
-                self.orbitRadius -= 3
-
         self.speed[1] += self.gravity
         self.position[1] += self.speed[1]
         
@@ -145,16 +123,10 @@ class Hero:
             if(self.position[0] > 0):
                 self.position[0] += self.speed[0]
 
-    def orbit(self, origin, radius, time):
-        #normalise phi, to get the angle in time
-        angle = phi * time 
-        rsa = radius * math.sin(angle)
-        rca = radius * math.cos(angle)
-        return (int(origin[0] + rca), int(origin[1] + rsa))
-
     def render(self):
-        self.updateHeroFrame()
-        self.updateOrbitPos()
-        
+        self.updateHeroFrame()        
         self.screen.blit(self.spriteSheet, (self.position[0], self.position[1]), self.getTile(self.currentFrame))
-        pygame.draw.circle(self.screen, [255,255,255], self.orbitPos, self.orbitRadius / 7)
+
+        self.orb.update(self)
+        self.orb.render()
+        
