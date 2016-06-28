@@ -1,9 +1,8 @@
 import pygame
-from Weapon import Orb
+import Spritesheet
+import AnimatedSpritesheet
 
 class Hero:
-
-    spriteSheet = pygame.image.load("assets/hero.png")
     
     tileSize = [30,48]
     speed = [0,0]
@@ -14,73 +13,25 @@ class Hero:
 
     gravity = 0.75
     onGround = False
-
-    framesToDelay = 3
-    framesDelayed = 0
-    currentFrame = 0
    
-    def __init__(self, screen):
-        self.screenWidth, self.screenHeight = pygame.display.Info().current_w, pygame.display.Info().current_h
-        self.screen = screen
-        self.surface = pygame.Surface(self.tileSize)
-        self.runGen = self.getRunFrame()
-        self.standGen = self.getStandFrame()
-        self.jumpGen = self.getJumpFrame()
-        self.updateHeroFrame()
-        self.orb = Orb(self.screen)
+    def __init__(self):
 
-    def getTile(self, tileNumber):
-        row = tileNumber / (self.spriteSheet.get_rect().width/self.tileSize[0])
-        column = tileNumber % (self.spriteSheet.get_rect().width/self.tileSize[0])
-        x = column * self.tileSize[0]
-        y = row * self.tileSize[1]
-        return [x, y, self.tileSize[0], self.tileSize[1]]
+        self.run = AnimatedSpritesheet.AnimatedSpritesheet('assets/hero.bmp', [16,15,14,13,12,11,10,9,8,7,6,5], pygame.Rect(0,0,30,48), True, 3)
+        self.stand = AnimatedSpritesheet.AnimatedSpritesheet('assets/hero.bmp', [17,18,19,20], pygame.Rect(0,0,30,48), True, 9)
+        self.jump = AnimatedSpritesheet.AnimatedSpritesheet('assets/hero.bmp', [4,3,2,1,0], pygame.Rect(0,0,30,48), True, 10)
+
+        self.run.iter()
+
+        self.currentFrame = next(self.jump)
+        self.updateHeroFrame()
 
     def updateHeroFrame(self):
-        self.framesDelayed += 1
         if(self.state == 'stand'):
-            if(self.framesDelayed >= 10):
-                self.framesDelayed = 0
-                self.currentFrame = next(self.standGen)
+            self.currentFrame = next(self.stand)
         elif(self.state == 'run'):
-            if(self.framesDelayed >= 5):
-                self.framesDelayed = 0
-                self.currentFrame = next(self.runGen)
+            self.currentFrame = next(self.run)
         elif(self.state == 'jump'):
-            if(self.framesDelayed >= 3):
-                self.framesDelayed = 0
-                self.currentFrame = next(self.jumpGen)
-
-    def getRunFrame(self):
-        while True:
-            yield 16
-            yield 15
-            yield 14
-            yield 13
-            yield 12
-            yield 11
-            yield 10
-            yield 9
-            yield 8
-            yield 7
-            yield 6
-            yield 5
-
-    def getStandFrame(self):
-        while True:
-            yield 17
-            yield 18
-            yield 19
-            yield 20
-
-    def getJumpFrame(self):
-        yield 3
-        yield 2
-        yield 1
-        yield 0
-
-        while True:
-            yield 4
+            self.currentFrame = next(self.jump)
 
     def startJump(self):
         if(self.onGround):
@@ -117,7 +68,7 @@ class Hero:
             self.onGround = True
 
         if(self.speed[0] > 0):
-            if(self.position[0] < self.screenWidth * 0.65 and self.speed[0] > 0):
+            if(self.position[0] < pygame.display.Info().current_w * 0.65 and self.speed[0] > 0):
                 self.position[0] += self.speed[0]
         elif(self.speed[0] < 0):
             if(self.position[0] > 0):
@@ -125,8 +76,5 @@ class Hero:
 
     def render(self):
         self.updateHeroFrame()        
-        self.screen.blit(self.spriteSheet, (self.position[0], self.position[1]), self.getTile(self.currentFrame))
-
-        self.orb.update(self)
-        self.orb.render()
+        return self.currentFrame
         

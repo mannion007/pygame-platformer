@@ -3,6 +3,7 @@ from random import randint
 import numpy as np
 from Character import Hero
 from Level import Level
+from Weapon import Orb
 
 pygame.init()
  
@@ -27,7 +28,8 @@ clock = pygame.time.Clock()
 ###############
 done = False
 level = Level(screen)
-hero = Hero(screen)
+hero = Hero()
+orb = Orb()
 
 ################# 
 ### Game loop ###
@@ -45,14 +47,17 @@ while not done:
                 hero.endJump()
  
     # Drawing
-    screen.fill([255,255,255])
+    screen.fill([255,0,0])
     
-    # Updating
+    # Update
     level.update(hero)
     hero.update()
+    orb.update(hero)
 
+    #Render
     level.render()    
-    hero.render()
+    screen.blit(hero.render(), (hero.position[0], hero.position[1]))
+    pygame.draw.circle(screen, [255,255,255], orb.orbitPos, orb.orbitRadius / 7)
 
     # Update screen
     pygame.display.flip()

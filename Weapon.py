@@ -10,9 +10,6 @@ class Orb:
 
     orbitPos = [0,0]
 
-    def __init__(self, screen):
-        self.screen = screen
-
     def calculatePosition(self, origin, radius, time):
         angle = phi * time 
         rsa = radius * math.sin(angle)
@@ -30,5 +27,5 @@ class Orb:
 
         self.orbitPos = self.calculatePosition([character.position[0] + character.tileSize[0] / 2, character.position[1] + character.tileSize[1] / 2], self.orbitRadius, pygame.time.get_ticks() * 0.001)
 
-    def render(self):       
-        pygame.draw.circle(self.screen, [255,255,255], self.orbitPos, self.orbitRadius / 7)
+    #def render(self):       
+        #pygame.draw.circle(self.screen, [255,255,255], self.orbitPos, self.orbitRadius / 7)
