@@ -45,6 +45,9 @@ while not done:
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 hero.endJump()
+            elif event.key == pygame.K_d:
+                print('YER')
+                hero.state = 'coast'
  
     # Drawing
     screen.fill([255,0,0])
