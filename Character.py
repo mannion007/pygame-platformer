@@ -13,14 +13,15 @@ class Hero:
 
     gravity = 0.75
     onGround = False
+
+    jogframes = 0
    
     def __init__(self):
 
-        self.run = AnimatedSpritesheet.AnimatedSpritesheet('assets/hero.bmp', [16,15,14,13,12,11,10,9,8,7,6,5], pygame.Rect(0,0,30,48), True, 3)
+        self.jog = AnimatedSpritesheet.AnimatedSpritesheet('assets/hero.bmp', [16,15,14,13,12,11,10,9,8,7,6,5], pygame.Rect(0,0,30,48), True, 3)
+        self.sprint = AnimatedSpritesheet.AnimatedSpritesheet('assets/hero.bmp', [30,29,28,27,26,25,24,23,22,21], pygame.Rect(0,0,30,48), True, 2)
         self.stand = AnimatedSpritesheet.AnimatedSpritesheet('assets/hero.bmp', [17,18,19,20], pygame.Rect(0,0,30,48), True, 9)
         self.jump = AnimatedSpritesheet.AnimatedSpritesheet('assets/hero.bmp', [4,3,2,1,0], pygame.Rect(0,0,30,48), True, 10)
-
-        self.run.iter()
 
         self.currentFrame = next(self.jump)
         self.updateHeroFrame()
@@ -28,10 +29,23 @@ class Hero:
     def updateHeroFrame(self):
         if(self.state == 'stand'):
             self.currentFrame = next(self.stand)
-        elif(self.state == 'run'):
-            self.currentFrame = next(self.run)
+            self.jogFrames = 0
+        elif(self.state == 'jog'):
+            if(self.speed[0] < 4):
+                if(self.speed[0] < 1.5):
+                    self.speed[0] = 1.5
+                else:
+                    self.speed[0] += 0.025
+            else :
+                self.speed[0] = 4
+            self.jogFrames += 1
+            if(self.jogFrames < 125):
+                self.currentFrame = next(self.jog)
+            else:
+                self.currentFrame = next(self.sprint)
         elif(self.state == 'jump'):
             self.currentFrame = next(self.jump)
+        print(self.speed)
 
     def startJump(self):
         if(self.onGround):
@@ -47,13 +61,13 @@ class Hero:
         keystate = pygame.key.get_pressed()
 
         if keystate[pygame.K_d]:
-            self.speed[0] = 3
+            #self.speed[0] = 2
             if self.onGround:
-                self.state = 'run'
+                self.state = 'jog'
         elif keystate[pygame.K_a]:
-            self.speed[0] = -3
+            #self.speed[0] = -2
             if self.onGround:
-                self.state = 'run'
+                self.state = 'jog'
         else:
             self.speed[0] = 0
             if self.onGround:
