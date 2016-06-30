@@ -23,8 +23,8 @@ class Level(object):
         return [x, y, self.tileWidth, self.tileHeight]
 
     def fetchTiles(self):
-        startColumn = self.position / self.tileWidth
-        endColumn = startColumn + (self.screenWidth / self.tileHeight) + 1
+        startColumn = int(self.position / self.tileWidth)
+        endColumn = int(startColumn + (self.screenWidth / self.tileHeight) + 1)
         tilesToDraw = self.tiles[0:self.screenHeight/self.tileHeight, startColumn:endColumn]
         for rowCount, row in enumerate(tilesToDraw):
             for columnCount, column in enumerate(row):

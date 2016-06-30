@@ -45,22 +45,19 @@ while not done:
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 hero.endJump()
-            elif event.key == pygame.K_d:
-                print('YER')
-                hero.state = 'coast'
  
-    # Drawing
+    # Drawingddd
     screen.fill([255,0,0])
     
     # Update
-    level.update(hero)
     hero.update()
+    level.update(hero)
     orb.update(hero)
 
     #Render
     level.render()    
     screen.blit(hero.render(), (hero.position[0], hero.position[1]))
-    pygame.draw.circle(screen, [255,255,255], orb.orbitPos, orb.orbitRadius / 7)
+    pygame.draw.circle(screen, [255,255,255], orb.orbitPos, orb.getRadius())
 
     # Update screen
     pygame.display.flip()
