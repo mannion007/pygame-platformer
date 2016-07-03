@@ -13,6 +13,8 @@ class Hero:
     gravity = 0.75
     spriteFlipped = False
 
+    hasWorldCollission = False
+
     def __init__(self):
         self.jog = AnimatedSpritesheet.AnimatedSpritesheet('assets/hero.bmp', [16,15,14,13,12,11,10,9,8,7,6,5], pygame.Rect(0,0,30,48), True, 3)
         self.sprint = AnimatedSpritesheet.AnimatedSpritesheet('assets/hero.bmp', [30,29,28,27,26,25,24,23,22,21], pygame.Rect(0,0,30,48), True, 2)
@@ -61,18 +63,18 @@ class Hero:
 
         if(self.accelleration[0] > 0):
             if(self.position[0] < pygame.display.Info().current_w * 0.65):
-                self.position[0] += self.speed[0]
+                self.position[0] += int(self.speed[0])
         else:
             if(self.position[0] > 0):
-                self.position[0] += self.speed[0]
+                self.position[0] += int(self.speed[0])
 
         if(self.onGround == False):
             self.speed[1] += self.gravity
             self.position[1] += self.speed[1]
         
         # Collision check
-        if(self.position[1] >= 250):
-            self.position[1] = 250
+        if(self.position[1] >= 242):
+            self.position[1] = 242
             self.speed[1] = 0
             self.onGround = True
 

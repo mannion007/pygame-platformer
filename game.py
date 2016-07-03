@@ -1,9 +1,10 @@
 import pygame
 from random import randint
 import numpy as np
-from Character import Hero
-from Level import Level
-from Weapon import Orb
+#from Character import Hero
+#from Level import Level
+#from Weapon import Orb
+from World import World
 
 pygame.init()
  
@@ -14,7 +15,7 @@ screenWidth = 480
 screenHeight = 320
 levelWidth = 4800
 levelHeight = screenHeight
-heroFrame = 0
+debug = False
 
 ##################
 ### Setup game ###
@@ -27,9 +28,7 @@ clock = pygame.time.Clock()
 ## Variables ##
 ###############
 done = False
-level = Level(screen)
-hero = Hero()
-orb = Orb()
+world = World()
 
 ################# 
 ### Game loop ###
@@ -41,23 +40,29 @@ while not done:
             done = True
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
-                hero.startJump()
+                world.hero.startJump()
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
-                hero.endJump()
+                world.hero.endJump()
  
-    # Drawingddd
-    screen.fill([255,0,0])
+    # Bavkground
+    screen.fill([0,0,0])
     
     # Update
-    hero.update()
-    level.update(hero)
-    orb.update(hero)
+    world.hero.update()
+    world.level.update(world.hero)
+    world.orb.update(world.hero)
 
     #Render
-    level.render()    
-    screen.blit(hero.render(), (hero.position[0], hero.position[1]))
-    pygame.draw.circle(screen, [255,255,255], orb.orbitPos, orb.getRadius())
+    if(world.level.getCurrentSurface() == 1):
+        screen.blit(world.level.surface1, [0 - world.level.position % (screenWidth + 160),0])
+        screen.blit(world.level.surface2, [0 - world.level.position % (screenWidth + 160) + screenWidth + 160,0])
+    else:
+        screen.blit(world.level.surface2, [0 - world.level.position % (screenWidth + 160),0])
+        screen.blit(world.level.surface1, [0 - world.level.position % (screenWidth + 160) + screenWidth + 160,0])
+
+    screen.blit(world.hero.render(), (world.hero.position[0], world.hero.position[1]))
+    pygame.draw.circle(screen, [255,255,255], world.orb.orbitPos, world.orb.getRadius())
 
     # Update screen
     pygame.display.flip()
