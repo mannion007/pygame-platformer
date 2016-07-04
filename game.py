@@ -26,6 +26,7 @@ clock = pygame.time.Clock()
 ###############
 done = False
 world = World()
+debug = True
 
 ################# 
 ### Game loop ###
@@ -44,7 +45,7 @@ while not done:
                 world.hero.endJump()
  
     # Update
-    world.update()
+    world.update(pygame.key.get_pressed())
 
     #Render
     world.render(screen)
