@@ -13,9 +13,6 @@ pygame.init()
 ########################
 screenWidth = 480
 screenHeight = 320
-levelWidth = 4800
-levelHeight = screenHeight
-debug = False
 
 ##################
 ### Setup game ###
@@ -32,9 +29,10 @@ world = World()
 
 ################# 
 ### Game loop ###
-#################
+#################d
 while not done:
  
+    # Read cotrols
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
@@ -45,29 +43,13 @@ while not done:
             if event.key == pygame.K_w:
                 world.hero.endJump()
  
-    # Bavkground
-    screen.fill([0,0,0])
-    
     # Update
-    world.hero.update()
-    world.level.update(world.hero)
-    world.orb.update(world.hero)
+    world.update()
 
     #Render
-    if(world.level.getCurrentSurface() == 1):
-        screen.blit(world.level.surface1, [0 - world.level.position % (screenWidth + 160),0])
-        screen.blit(world.level.surface2, [0 - world.level.position % (screenWidth + 160) + screenWidth + 160,0])
-    else:
-        screen.blit(world.level.surface2, [0 - world.level.position % (screenWidth + 160),0])
-        screen.blit(world.level.surface1, [0 - world.level.position % (screenWidth + 160) + screenWidth + 160,0])
+    world.render(screen)
 
-    screen.blit(world.hero.render(), (world.hero.position[0], world.hero.position[1]))
-    pygame.draw.circle(screen, [255,255,255], world.orb.orbitPos, world.orb.getRadius())
-
-    # Update screen
     pygame.display.flip()
-
-    # Framerate
     clock.tick(60)
  
 # Be IDLE friendly
