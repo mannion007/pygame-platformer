@@ -29,4 +29,4 @@ class Orb:
             if(self.orbitRadius > self.minOrbitRadius):
                 self.orbitRadius -= 3
 
-        self.orbitPos = self.calculatePosition([int(hero.hitbox.centerx), int(hero.hitbox.centery)], self.orbitRadius, pygame.time.get_ticks() * 0.001, hero.spriteFlipped)
+        self.orbitPos = self.calculatePosition([int(hero.rect.centerx), int(hero.rect.centery)], self.orbitRadius, pygame.time.get_ticks() * 0.001, hero.spriteFlipped)

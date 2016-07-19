@@ -1,9 +1,6 @@
 import pygame
 from random import randint
 import numpy as np
-#from Character import Hero
-#from Level import Level
-#from Weapon import Orb
 from World import World
 
 pygame.init()
@@ -30,7 +27,7 @@ debug = True
 
 ################# 
 ### Game loop ###
-#################d
+#################
 while not done:
  
     # Read cotrols
