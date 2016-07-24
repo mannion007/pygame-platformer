@@ -18,50 +18,52 @@ class World:
         
     def update(self, keystate):
 
-        #self.worldPosition = 10
-
+        self.level.update(self.worldPosition)
         self.hero.update(keystate)
         self.orb.update(self.hero)
-        self.level.update(self.hero)
 
         # Check for X collision
-        if(self.hero.speedX != 0):
-            #firstRow = int(self.hero.positionY / self.tileSize)
-            #lastRow = int((self.hero.positionY + self.hero.height) / self.tileSize + 1)
-            #heroColumn = int(self.hero.positionX / self.tileSize)
-            firstRow = int(self.hero.rect.top / self.tileSize)
-            lastRow = int((self.hero.rect.bottom) / self.tileSize + 1)
-            heroColumn = int(self.hero.rect.left / self.tileSize)
+        firstRow = int(self.hero.rect.top / self.tileSize)
+        lastRow = int((self.hero.rect.bottom) / self.tileSize + 1)
+        heroColumn = int(self.hero.rect.left / self.tileSize)
 
-            if(self.hero.speedX > 0):
-                lastColumn = self.worldPosition + (self.screenWidth / self.tileSize)
-            elif(self.hero.speedX < 0):
-                lastColumn = self.worldPosition / self.tileSize
-            
-            closestCollisionColumn = lastColumn
-            
-            if(self.hero.speedX > 0):
-                for row in range(firstRow, lastRow, 1):
-                    for column in range(heroColumn, lastColumn, 1):
-                        if(self.level.tiles[row, column] != 0):
-                            if(column < closestCollisionColumn):
-                                closestCollisionColumn = column
-                                break
+        print heroColumn
 
-            elif(self.hero.speedX < 0):
-                for row in range(firstRow, lastRow):
-                    for column in range(heroColumn, lastColumn, -1):
-                        if(self.level.tiles[row, column] != 0):
-                            if(column > closestCollisionColumn):
-                                closestCollisionColumn = column + 1
-                                break
+        if heroColumn % 30 == 0:
+            self.worldPosition = heroColumn * 16
 
-            if(self.hero.speedX > 0):
-                if(self.hero.targetRect.right < closestCollisionColumn * self.tileSize):
-                    self.hero.rect.left = self.hero.targetRect.left
-            elif(self.hero.speedX < 0):
-                if(self.hero.targetRect.left >= closestCollisionColumn * self.tileSize):
-                    self.hero.rect.left = self.hero.targetRect.left
+
+        print self.worldPosition / 16
+
+        if(self.hero.speedX >= 0):
+            lastColumn = heroColumn + 5
+        elif(self.hero.speedX < 0):
+            lastColumn = heroColumn - 5
+        
+        closestCollisionColumn = lastColumn
+        
+        if(self.hero.speedX > 0):
+            for row in range(firstRow, lastRow):
+                for column in range(heroColumn, lastColumn):
+                    if(self.level.tiles[row, column] != 0):
+                        if(column < closestCollisionColumn):
+                            closestCollisionColumn = column
+                            break
+
+        elif(self.hero.speedX < 0):
+            for row in range(firstRow, lastRow):
+                for column in range(heroColumn, lastColumn, -1):
+                    if(self.level.tiles[row, column] != 0):
+                        if(column > closestCollisionColumn):
+                            closestCollisionColumn = column + 1
+                            break
+
+        if(self.hero.speedX > 0):
+            if(self.hero.targetRect.right < closestCollisionColumn * self.tileSize):
+                self.hero.rect.left = self.hero.targetRect.left
+        elif(self.hero.speedX < 0):
+            if(self.hero.targetRect.left >= closestCollisionColumn * self.tileSize):
+                self.hero.rect.left = self.hero.targetRect.left
 
         firstColumn = int(self.hero.rect.left / self.tileSize)
         lastColumn = int((self.hero.rect.right) / self.tileSize + 1)
@@ -109,10 +111,10 @@ class World:
 
     def render(self, screen):
 
-        screen.blit(self.level.render(), [self.worldPosition, 0])
-        screen.blit(self.hero.render(), (self.hero.rect.left, self.hero.rect.top))
+        screen.blit(self.level.render(), [0, 0])
+        screen.blit(self.hero.render(), (self.hero.rect.left - self.worldPosition, self.hero.rect.top))
         
         pygame.draw.circle(screen, [255,255,255], self.orb.orbitPos, self.orb.getRadius())
         
-        pygame.draw.rect(screen, [255,0,0], self.hero.rect)
-        pygame.draw.rect(screen, [0,255,0], self.hero.targetRect)
+        #pygame.draw.rect(screen, [255,0,0], self.hero.rect)
+        #pygame.draw.rect(screen, [0,255,0], self.hero.targetRect)

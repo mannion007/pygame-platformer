@@ -4,8 +4,6 @@ import AnimatedSpritesheet
 
 class Hero:
     
-    tileSize = [30,48]
-    
     maxSpeed = 4
     accelleration = [0,0]
     friction = 0.25
@@ -15,8 +13,8 @@ class Hero:
     width = 30
     height = 46
 
-    positionX = 20
-    positionY = 20
+    positionX = 10
+    positionY = 10
 
     speedX = 0
     speedY = 0
